@@ -20,7 +20,10 @@ pub enum Error {
     RegexError(#[from] regex::Error),
 
     #[error("Couldn't decode string into toml object")]
-    SerdeError(#[from] toml::de::Error),
+    TomlDecodeError(#[from] toml::de::Error),
+
+    #[error("Couldn't serialize struct into toml string")]
+    TomlEncodeError(#[from] toml::ser::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

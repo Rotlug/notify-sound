@@ -1,10 +1,7 @@
-use std::{
-    fs,
-    io::{Read, Result},
-    path::PathBuf,
-};
+use std::io;
+use std::io::Write;
+use std::{fs, io::Read, path::PathBuf};
 
-use futures::io;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
@@ -32,6 +29,10 @@ impl Config {
                 app_name: ".*".to_string(),
                 sound_path: String::new(),
             });
+
+            let mut config_file = fs::File::create(&config_path)?;
+            let string = toml::to_string(&default_config)?;
+            write!(config_file, "{string}")?;
 
             return Ok(default_config);
         }
@@ -64,7 +65,7 @@ pub struct SoundKey {
 
 pub struct Sound {
     app_regex: Regex,
-    sound_bytes: Vec<u8>,
+    sound_bytes: &'static [u8],
 }
 
 impl TryFrom<SoundKey> for Sound {
@@ -73,6 +74,7 @@ impl TryFrom<SoundKey> for Sound {
         let app_regex = Regex::new(&value.app_name)?;
         let path: PathBuf = value.sound_path.into();
         let sound_bytes: Vec<u8> = fs::read(path)?;
+        let sound_bytes: &'static [u8] = Box::new(sound_bytes).leak();
 
         Ok(Self {
             app_regex,
