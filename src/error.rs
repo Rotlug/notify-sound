@@ -1,3 +1,5 @@
+use std::io;
+
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -7,6 +9,18 @@ pub enum Error {
 
     #[error("FDO Error")]
     FDOError(#[from] zbus::fdo::Error),
+
+    #[error("IO Error")]
+    IOError(#[from] io::Error),
+
+    #[error("Rodio Error")]
+    RodioError(#[from] rodio::PlayError),
+
+    #[error("Couldn't compile regex")]
+    RegexError(#[from] regex::Error),
+
+    #[error("Couldn't decode string into toml object")]
+    SerdeError(#[from] toml::de::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
