@@ -1,5 +1,5 @@
-use std::io;
 use std::io::Write;
+use std::io::{self};
 use std::{fs, io::Read, path::PathBuf};
 
 use regex::Regex;
@@ -59,26 +59,28 @@ impl Config {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SoundKey {
-    app_name: String,
-    sound_path: String,
+    pub app_name: String,
+    pub sound_path: String,
 }
 
 pub struct Sound {
-    app_regex: Regex,
-    sound_bytes: &'static [u8],
+    pub key: SoundKey,
+    pub app_regex: Regex,
+    pub bytes: &'static [u8],
 }
 
 impl TryFrom<SoundKey> for Sound {
     type Error = crate::Error;
     fn try_from(value: SoundKey) -> crate::Result<Self> {
         let app_regex = Regex::new(&value.app_name)?;
-        let path: PathBuf = value.sound_path.into();
+        let path: PathBuf = value.sound_path.clone().into();
         let sound_bytes: Vec<u8> = fs::read(path)?;
-        let sound_bytes: &'static [u8] = Box::new(sound_bytes).leak();
+        let sound: &'static [u8] = Box::new(sound_bytes).leak();
 
         Ok(Self {
             app_regex,
-            sound_bytes,
+            bytes: sound,
+            key: value,
         })
     }
 }

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use zbus::zvariant::{self, Type};
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize, Type)]
 pub struct Notification {
     pub app_name: String,
@@ -36,11 +37,21 @@ impl From<u64> for Urgency {
 }
 
 impl Notification {
+    /// Get the notification's urgency level. this is used to play a custom sound for urgent
+    /// notifications, for example.
     pub fn urgency(&self) -> Urgency {
         self.hints
             .get("urgency")
             .and_then(|v| v.try_into().ok())
             .map(|v: u8| Urgency::from(u64::from(v)))
             .unwrap_or_default()
+    }
+
+    /// Get the "Origin Name" of the notification. This is used to play a custom sound for a
+    /// notification from a specific website from chromium, for example.
+    pub fn origin_name(&self) -> Option<&str> {
+        self.hints
+            .get("x-kde-origin-name")
+            .and_then(|v| v.try_into().ok())
     }
 }

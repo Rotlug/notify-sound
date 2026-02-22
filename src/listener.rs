@@ -1,28 +1,8 @@
-use std::collections::HashMap;
-
 use futures::StreamExt;
-use serde::Deserialize;
 use tokio::sync::mpsc;
-use zbus::{
-    Connection, MatchRule,
-    zvariant::{self, Type},
-};
+use zbus::{Connection, MatchRule};
 
-#[derive(Debug, Deserialize, Type)]
-pub struct Notification {
-    pub app_name: String,
-    pub replaces_id: u32,
-    pub app_icon: String,
-    pub summary: String,
-    pub body: String,
-    pub actions: Vec<String>,
-    pub hints: HashMap<String, zvariant::OwnedValue>,
-    pub expire_timeout: i32,
-}
-
-impl Notification {
-    fn urgency() {}
-}
+use crate::notification::Notification;
 
 pub struct Listener {
     event_tx: mpsc::Sender<Notification>,

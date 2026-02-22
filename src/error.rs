@@ -13,9 +13,6 @@ pub enum Error {
     #[error("IO Error")]
     IOError(#[from] io::Error),
 
-    #[error("Rodio Error")]
-    RodioError(#[from] rodio::PlayError),
-
     #[error("Couldn't compile regex")]
     RegexError(#[from] regex::Error),
 
