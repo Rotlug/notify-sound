@@ -20,7 +20,6 @@
             buildInputs = with pkgs; [
               rustc
               cargo
-              rustlings
               clippy
 
               alsa-lib
