@@ -3,15 +3,21 @@ use std::io::Cursor;
 
 pub use error::*;
 use rodio::MixerDeviceSink;
+use tokio::sync::mpsc;
+use zbus::Connection;
 mod config;
 mod listener;
 mod notification;
 
-use crate::{config::Config, listener::Listener, notification::Urgency};
+use crate::{config::Config, listener::watch_notifications, notification::Urgency};
 
 #[tokio::main]
 async fn main() -> crate::Result<()> {
-    let (_listener, mut rx) = Listener::new().await?;
+    // Listen to incoming notifications
+    let (tx, mut rx) = mpsc::channel(16);
+    let connection = Connection::session().await?;
+    tokio::spawn(watch_notifications(connection, tx));
+
     let config = Config::try_get()?;
     let sounds = config.load_sounds()?;
     let urgent_sound = sounds
