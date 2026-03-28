@@ -8,6 +8,7 @@ use crate::notification::Notification;
 pub async fn watch_notifications(
     connection: Connection,
     event_tx: mpsc::Sender<Notification>,
+    debug: bool,
 ) -> crate::Result<()> {
     let proxy = zbus::fdo::MonitoringProxy::builder(&connection)
         .destination("org.freedesktop.DBus")?
@@ -30,6 +31,10 @@ pub async fn watch_notifications(
         let Ok(body) = msg.body().deserialize::<Notification>() else {
             continue;
         };
+
+        if debug {
+            println!("{:#?}", body);
+        }
 
         let _ = event_tx.send(body).await;
     }
