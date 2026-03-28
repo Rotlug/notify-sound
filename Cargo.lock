@@ -804,7 +804,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "notify_sound"
+name = "notify-sound"
 version = "0.1.0"
 dependencies = [
  "dirs",
