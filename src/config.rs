@@ -12,7 +12,7 @@ pub struct Config {
 
 impl Config {
     /// Loads & Parses the existing confile from, or makes one and returns the default config.
-    pub fn try_get() -> crate::Result<Self> {
+    pub fn try_get() -> anyhow::Result<Self> {
         let config_path = dirs::config_dir()
             .expect("Failed to find config dir")
             .join("notify_sound.toml");
@@ -46,11 +46,11 @@ impl Config {
     }
 
     /// Compile the regex and load the sound files into memory
-    pub fn load_sounds(self) -> crate::Result<Vec<Sound>> {
+    pub fn load_sounds(self) -> anyhow::Result<Vec<Sound>> {
         self.sounds
             .into_iter()
             .map(|s| {
-                let s: crate::Result<Sound> = s.try_into();
+                let s: anyhow::Result<Sound> = s.try_into();
                 s
             })
             .collect()
@@ -70,8 +70,9 @@ pub struct Sound {
 }
 
 impl TryFrom<SoundKey> for Sound {
-    type Error = crate::Error;
-    fn try_from(value: SoundKey) -> crate::Result<Self> {
+    type Error = anyhow::Error;
+
+    fn try_from(value: SoundKey) -> anyhow::Result<Self> {
         let app_regex = Regex::new(&value.app_name)?;
         let path: PathBuf = value.sound_path.clone().into();
         let sound_bytes: Vec<u8> = fs::read(path)?;

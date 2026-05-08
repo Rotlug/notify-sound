@@ -9,7 +9,7 @@ pub async fn watch_notifications(
     connection: Connection,
     event_tx: mpsc::Sender<Notification>,
     debug: bool,
-) -> crate::Result<()> {
+) -> anyhow::Result<()> {
     let proxy = zbus::fdo::MonitoringProxy::builder(&connection)
         .destination("org.freedesktop.DBus")?
         .path("/org/freedesktop/DBus")?
@@ -33,7 +33,7 @@ pub async fn watch_notifications(
         };
 
         if debug {
-            println!("{:#?}", body);
+            println!("{body:#?}");
         }
 
         let _ = event_tx.send(body).await;

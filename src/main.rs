@@ -1,11 +1,10 @@
-mod error;
 use std::io::Cursor;
 
 use clap::Parser;
-pub use error::*;
 use rodio::MixerDeviceSink;
 use tokio::sync::mpsc;
 use zbus::Connection;
+
 mod args;
 mod config;
 mod listener;
@@ -14,7 +13,7 @@ mod notification;
 use crate::{args::Args, config::Config, listener::watch_notifications, notification::Urgency};
 
 #[tokio::main]
-async fn main() -> crate::Result<()> {
+async fn main() -> anyhow::Result<()> {
     // Listen to incoming notifications
     let (tx, mut rx) = mpsc::channel(16);
     let connection = Connection::session().await?;

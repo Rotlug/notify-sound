@@ -909,13 +909,13 @@ dependencies = [
 name = "notify-sound"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "dirs",
  "futures",
  "regex",
  "rodio",
  "serde",
- "thiserror 2.0.18",
  "tokio",
  "toml",
  "zbus",
