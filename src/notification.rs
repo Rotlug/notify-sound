@@ -25,8 +25,8 @@ pub enum Urgency {
     Urgent,
 }
 
-impl From<u64> for Urgency {
-    fn from(value: u64) -> Self {
+impl From<u8> for Urgency {
+    fn from(value: u8) -> Self {
         match value {
             0 => Self::Low,
             1 => Self::Normal,
@@ -43,7 +43,7 @@ impl Notification {
         self.hints
             .get("urgency")
             .and_then(|v| v.try_into().ok())
-            .map(|v: u8| Urgency::from(u64::from(v)))
+            .map(|v: u8| Urgency::from(v))
             .unwrap_or_default()
     }
 
